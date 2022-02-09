@@ -62,7 +62,7 @@ public class TreeNodeV4 extends Node{
 
     @Override
     public String toString() {
-        if (parent != null && getID() == parent.getID() && totalChildren > 1) {
+        if (parent != null && getID() == parent.getID() && totalChildren > 0) {
         return getID() + " Nb children: " + children.size() + " Total children:" + (totalChildren-1);
         }
         return getID() + " Nb children: " + children.size();
