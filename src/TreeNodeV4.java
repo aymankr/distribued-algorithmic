@@ -8,6 +8,7 @@ public class TreeNodeV4 extends Node{
     private Node parent;
     private ArrayList<Node> children;
     private Integer time;
+    private int totalChildren;
 
     @Override
     public void onStart() { // Initialisation par défaut
@@ -37,14 +38,23 @@ public class TreeNodeV4 extends Node{
                 time = getTime();
             }
         }
-        else if (message.getFlag().equals("CHILD")){
+        else if (message.getFlag().equals("CHILD")){ // C'est une feuille
             children.add(message.getSender());
+            totalChildren = 0;
+            send(parent, new Message(totalChildren, "FINISHED")); // Notifier le parent de la fin
+        }
+        else if (message.getFlag().equals("FINISHED")){ // Si fini
+            if (parent.getID() == getID()) { // si l'id est la racine
+                setColor(Color.orange);
+            }
+            totalChildren += (int)message.getContent();
+            send(parent, new Message(totalChildren, "FINISHED")); // notifier le parent
         }
     }
 
     @Override
     public void onClock() {
-        if (time != null && getTime() == time+2) {
+        if (time != null && getTime() == time+2 && children.isEmpty()) {
             setColor(Color.gray);
             send(parent, new Message("I finished.", "CHILD"));
         }
@@ -52,6 +62,9 @@ public class TreeNodeV4 extends Node{
 
     @Override
     public String toString() {
-        return getID() + " " + children.size();
+        if (parent != null && getID() == parent.getID() && totalChildren > 1) {
+        return getID() + " Nb children: " + children.size() + " Total children:" + (totalChildren-1);
+        }
+        return getID() + " Nb children: " + children.size();
     }
 }
