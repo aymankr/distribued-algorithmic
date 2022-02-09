@@ -4,10 +4,11 @@ import io.jbotsim.core.Node;
 
 import java.util.ArrayList;
 
-public class TreeNodeV4 extends Node{
+public class TreeNodeV5 extends Node{
     private Node parent;
     private ArrayList<Node> children;
     private Integer time;
+    private int totalChildren;
 
     @Override
     public void onStart() { // Initialisation par défaut
@@ -39,13 +40,15 @@ public class TreeNodeV4 extends Node{
         }
         else if (message.getFlag().equals("CHILD")){ // C'est une feuille
             children.add(message.getSender());
-            send(parent, new Message("", "FINISHED")); // Notifier le parent de la fin
+            totalChildren = 0;
+            send(parent, new Message(totalChildren, "FINISHED")); // Notifier le parent de la fin
         }
         else if (message.getFlag().equals("FINISHED")){ // Si fini
             if (parent.getID() == getID()) { // si l'id est la racine
                 setColor(Color.orange);
             }
-            send(parent, new Message("", "FINISHED")); // notifier le parent
+            totalChildren += (int)message.getContent();
+            send(parent, new Message(totalChildren, "FINISHED")); // notifier le parent
         }
     }
 
@@ -59,6 +62,9 @@ public class TreeNodeV4 extends Node{
 
     @Override
     public String toString() {
+        if (parent != null && getID() == parent.getID() && totalChildren > 0) {
+            return getID() + " Nb children: " + children.size() + " Total children:" + (totalChildren-1);
+        }
         return getID() + " Nb children: " + children.size();
     }
 }
