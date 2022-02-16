@@ -1,10 +1,12 @@
+package TD1;
+
 import io.jbotsim.core.Color;
 import io.jbotsim.core.Message;
 import io.jbotsim.core.Node;
 
 import java.util.ArrayList;
 
-public class TreeNodeV4 extends Node{
+public class TreeNodeV3 extends Node{
     private Node parent;
     private ArrayList<Node> children;
     private Integer time;
@@ -37,15 +39,8 @@ public class TreeNodeV4 extends Node{
                 time = getTime();
             }
         }
-        else if (message.getFlag().equals("CHILD")){ // C'est une feuille
+        else if (message.getFlag().equals("CHILD")){
             children.add(message.getSender());
-            send(parent, new Message("", "FINISHED")); // Notifier le parent de la fin
-        }
-        else if (message.getFlag().equals("FINISHED")){ // Si fini
-            if (parent.getID() == getID()) { // si l'id est la racine
-                setColor(Color.orange);
-            }
-            send(parent, new Message("", "FINISHED")); // notifier le parent
         }
     }
 
@@ -59,6 +54,6 @@ public class TreeNodeV4 extends Node{
 
     @Override
     public String toString() {
-        return getID() + " Nb children: " + children.size();
+        return getID() + " " + children.size();
     }
 }
